@@ -22,5 +22,37 @@ llm = ChatGoogleGenerativeAI(
     max_tokens=None,
     timeout=None,
     max_retries=2,
-    
+
 )
+
+# We can chain our model with a prompt template like so:
+from langchain_core.prompts import ChatMessagePromptTemplate
+
+prompt = ChatMessagePromptTemplate.format_messages(
+    [
+        (
+
+            "system",
+             "You are a helpful assistant that translate {input_language} to {output_language}"
+        ),
+
+        ("human", "{input}"),
+    ]
+)
+
+st.title("Langchain Demo with Gemini(Language Translation")
+input_text = st.text_input("Write the sentence in Englidh and it will be translated")
+
+output_parser = StrOutputParser()
+
+chain = prompt|llm|output_parser
+
+if input_text:
+    st.write(chain.invoke(
+        {
+            "input_language" : "English",
+            "output_language" : "German",
+            "input_text": input_text,
+            
+        }
+    ))
